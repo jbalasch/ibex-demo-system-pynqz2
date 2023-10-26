@@ -249,12 +249,22 @@ can choose to immediately run it or begin halted, allowing you to attach a
 debugger.
 
 ```bash
+export PATH="/opt/openocd/src:$PATH"
+
 # Run demo
 ./util/load_demo_system.sh pynqz2 run ./sw/build/demo/hello_world/demo
 ./util/load_demo_system.sh pynqz2 run ./sw/build/demo/lcd_st7735/lcd_st7735
 
 # Load demo and start halted awaiting a debugger
 ./util/load_demo_system.sh pynqz2 halt ./sw/build/demo/hello_world/demo
+```
+
+Then run GDB against the running binary and connect to localhost:3333 as a remote target
+
+```
+export PATH="/opt/lowrisc-toolchain/bin:$PATH"
+
+riscv32-unknown-elf-gdb -ex "target extended-remote localhost:3333" ./sw/build/demo/hello_world/demo
 ```
 
 ### UART connection 
@@ -268,22 +278,3 @@ To view terminal output use screen:
 ```bash
 screen /dev/ttyUSB1 115200
 ```
-
-## Debugging an application
-
-Either load an application and halt (see above) or start a new OpenOCD instance
-
-```
-export PATH="/opt/openocd/src:$PATH"
-
-./util/load_demo_system.sh pynqz2 run ./sw/build/demo/hello_world/demo
-```
-
-Then run GDB against the running binary and connect to localhost:3333 as a remote target
-
-```
-export PATH="/opt/lowrisc-toolchain/bin:$PATH"
-
-riscv32-unknown-elf-gdb -ex "target extended-remote localhost:3333" ./sw/build/demo/hello_world/demo
-```
-
