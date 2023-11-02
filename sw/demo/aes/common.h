@@ -2,7 +2,10 @@
 #define COMMON_H
 
 /* Security parameter */
-#define n 3
+#define n 2
+
+/* Hardware acceleration */
+#define HW_ACCEL 0
 
 typedef unsigned char uint8_t;
 

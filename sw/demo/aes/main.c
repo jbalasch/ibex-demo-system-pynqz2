@@ -2,11 +2,14 @@
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
 
+#include <stdio.h>
+
 #include "demo_system.h"
 #include "timer.h"
 
+#include "common.h"
 #include "aes-ip-top.h"
-
+#include "gf_256.h"
 
 void test_uart_irq_handler(void) __attribute__((interrupt));
 
@@ -57,10 +60,44 @@ int main(void)
 
   // This indicates how often the timer gets updated.
   timer_init();
-  timer_enable(5000000);
+  timer_enable(50000000);
 
   uint64_t last_elapsed_time = get_elapsed_time();
 
+  unsigned int a1,a2 = 0;
+  char buf[32];
+  
+  /*uint8_t src1 = 0xFE;
+  uint8_t src2 = 0x34;
+  uint8_t dst; 
+  uint8_t dst2;
+  
+  a1 = get_mcycle();
+  for(i=0; i<100; i++)
+    gf256Multiply(&dst, src1, src2);
+  a2 = get_mcycle();
+  snprintf(buf, 32, "cycles: %10d", (a2-a1)/100);
+
+  puts("GFMUL (SW): ");
+  puts(buf);
+  putchar('\n');
+  putbyte(dst);
+  putchar('\n');
+
+  a1 = get_mcycle();
+  for(i=0; i<100; i++)
+    gfmul_hw(&dst2, src1, src2);
+  a2 = get_mcycle();
+  snprintf(buf, 32, "cycles: %10d", (a2-a1)/100);
+  
+  puts("GFMUL (HW): ");
+  puts(buf);
+  putchar('\n');
+  putbyte(dst2);
+  putchar('\n');
+
+  while(1);*/
+  
   while(1) {
     uint64_t cur_time = get_elapsed_time();
 
@@ -78,13 +115,17 @@ int main(void)
       set_global_interrupt_enable(1);
 
       // Do AES
+      a1 = get_mcycle();
       aes_ip_enc(&ct[0], &pt[0], &key[0]);
-
+      a2 = get_mcycle();
+      snprintf(buf, 32, "cycles: %10d", (a2-a1));
+      
       // Output result:
       for(i=0; i<16; i++)
         putbyte(ct[i]);
       putchar('\n');
-
+      puts(buf);
+      putchar('\n');
     }
     asm volatile ("wfi");
   }

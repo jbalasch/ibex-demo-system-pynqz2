@@ -4,6 +4,8 @@
 
 #include <stdint.h>
 
+#include "common.h"
+
 const static uint8_t inverse[256] = {
 0x00,0x01,0x8D,0xF6,0xCB,0x52,0x7B,0xD1,0xE8,0x4F,0x29,0xC0,0xB0,0xE1,0xE5,0xC7,
 0x74,0xB4,0xAA,0x4B,0x99,0x2B,0x60,0x5F,0x58,0x3F,0xFD,0xCC,0xFF,0x40,0xEE,0xB2,
@@ -122,22 +124,32 @@ void gf256Multiply(uint8_t * res, uint8_t a, uint8_t b)
 
 void gf256Multiply(uint8_t * res, uint8_t a, uint8_t b)
 {
-	uint32_t t = 0;
-	uint8_t q, flag;
-	
-	// first lookups
-	t = Logtable[a] + Logtable[b];
-	
-	// mod 255
-	q = t & 0xFF;
-	t = (t>>8);
-	t = t + q;
-	
-	// second lookup
-	q = Alogtable[t];
-	
-	// conditional return
-	*res = q * ((a+0xFF)>>8) * ((b+0xFF)>>8);
+
+	#if HW_ACCEL==0
+
+		uint32_t t = 0;
+		uint8_t q;
+		
+		// first lookups
+		t = Logtable[a] + Logtable[b];
+		
+		// mod 255
+		q = t & 0xFF;
+		t = (t>>8);
+		t = t + q;
+		
+		// second lookup
+		q = Alogtable[t];
+		
+		// conditional return
+		*res = q * ((a+0xFF)>>8) * ((b+0xFF)>>8);
+	#else
+		
+		asm (".insn r CUSTOM_0, 0, 0, %0, %1, %2" :
+       "=r"(*res) :
+       "r"(a), "r"(b));
+
+	#endif
 	
 }
 

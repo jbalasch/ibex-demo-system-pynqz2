@@ -193,7 +193,6 @@ void refreshMask(mask * mout, mask * min)
 void maskSquaring(mask * out, mask * op)
 {
 	int i;
-	uint8_t tmp;
 	
 	for(i=0; i<n; i++)
 	{
@@ -249,7 +248,7 @@ void maskMultiplication(mask * out, mask * op1, mask * op2)
 	int i,j;
 	uint8_t T[n][n], U[n][n], Up[n][n], V[n][n];
 	
-	uint8_t tmp, val;
+	uint8_t tmp;
 	
 	// 1) Compute product matrix T
 	for(i=0; i<n; i++)
@@ -346,7 +345,7 @@ void maskMultiplication2(mask * out, mask * op1, mask * op2)
 	int i,j;
 	uint8_t u[n], Ap[n][n], Bp[n], T[n][n], U[n][n], Up[n][n], V[n][n];
 	
-	uint8_t tmp, val;
+	uint8_t tmp;
 	
 	// 1) Compute vector u
 	for(i=0; i<n; i++)
@@ -507,7 +506,7 @@ void maskMultConst(mask * out, mask * op1, uint8_t op2)
 
 void maskAddConst(mask * mval, mask * op1, uint8_t val)
 {
-	int i, flag;
+	int i;
 	uint8_t tmp, tmp2;
 	
 	mval->L[0] = op1->L[0];	
