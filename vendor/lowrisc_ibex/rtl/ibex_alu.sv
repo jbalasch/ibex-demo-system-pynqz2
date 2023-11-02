@@ -1312,6 +1312,12 @@ module ibex_alu #(
     assign imd_val_we_o        = '{default: '0};
   end
 
+  // GFMul
+  logic [7:0] res_gfmul_o;
+
+  // Multipliers for complex multiplication
+  gfmul_8 gfmul (.a_i(operand_a_i[7:0]), .b_i(operand_b_i[7:0]), .result_o(res_gfmul_o));
+
   ////////////////
   // Result mux //
   ////////////////
@@ -1320,6 +1326,10 @@ module ibex_alu #(
     result_o   = '0;
 
     unique case (operator_i)
+
+      // GFMul
+      ALU_GFMUL_R: result_o = {24'h000000, res_gfmul_o};
+
       // Bitwise Logic Operations (negate: RV32B)
       ALU_XOR,  ALU_XNOR,
       ALU_OR,   ALU_ORN,

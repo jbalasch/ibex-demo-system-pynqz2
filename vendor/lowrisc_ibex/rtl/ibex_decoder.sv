@@ -558,6 +558,15 @@ module ibex_decoder #(
         end
       end
 
+      OPCODE_GFMUL: begin  // GFMUL extension
+        if (instr[14:12]== 3'b000) begin
+          rf_ren_a_o = 1'b1;
+          rf_ren_b_o = 1'b1;
+          rf_we = 1'b1;
+        end else
+          illegal_insn = 1'b1;
+      end
+
       /////////////
       // Special //
       /////////////
@@ -688,6 +697,16 @@ module ibex_decoder #(
     div_sel_o          = 1'b0;
 
     unique case (opcode_alu)
+
+      OPCODE_GFMUL: begin
+        alu_op_a_mux_sel_o = OP_A_REG_A;
+        alu_op_b_mux_sel_o = OP_B_REG_B;
+
+        unique case (instr[14:12])
+          3'b000: alu_operator_o = ALU_GFMUL_R;
+          default: ;
+        endcase
+      end
 
       ///////////
       // Jumps //
